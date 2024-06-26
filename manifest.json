@@ -1,0 +1,4 @@
+{
+    "namespace": "pile_of_pets",
+    "setup": "setup.mjs"
+}
