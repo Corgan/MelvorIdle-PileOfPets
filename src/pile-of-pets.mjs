@@ -5,6 +5,7 @@ export class PileOfPetsManager extends StatProvider {
         super();
         this.petCount = new Map();
         this.validPets = game.pets.filter(this.petFilter);
+        this.notificationToggle = settings.section('Pile of Pets').get('notificationToggle');
         this.initialRequired = settings.section('Pile of Pets').get('initialRequired');
         this.tierScaling = settings.section('Pile of Pets').get('tierScaling');
         this.maxTier = settings.section('Pile of Pets').get('maxTier');
@@ -137,6 +138,10 @@ export class PileOfPetsManager extends StatProvider {
         });
     }
 
+    setNotificationToggle(value) {
+        this.notificationToggle = value;
+    }
+
     setInitialRequired(value) {
         if(Number.isSafeInteger(value) && value >= 1) {
             this.initialRequired = value;
@@ -205,14 +210,21 @@ export class PileOfPetsManager extends StatProvider {
         if(tier > 0 && tier === game.pileofpets.maxTier)
             countForTier = '∞';
 
-        addModalToQueue({
-            title: "A Fine Addition To Your Collection",
-            html: `<span class="text-success">${pet.name}</span><br><small class="text-info">${pet.description}</small><br><div class="row no-gutters"><div class="col-12 text-center"><small class="text-warning">Tier ${tier} Pile</small></div><div class="col-4 text-left"><small class="text-muted">${currentCount} / ${countForTier} to next</small></div><div class="col-4 text-center"><small class="text-muted">${multiplier + 1}x Multiplier</small></div><div class="col-4 text-right"><small class="text-muted">${count} Extras Found</small></div></div>`,
-            imageUrl: pet.media,
-            imageWidth: 128,
-            imageHeight: 128,
-            imageAlt: pet.name,
-        });
+        if(this.notificationToggle) {
+            game.combat.notifications.add({
+                type: 'Player',
+                args: [pet, `${pet.name} added to your collection.`, 'success', 1],
+            })
+        } else {
+            addModalToQueue({
+                title: "A Fine Addition To Your Collection",
+                html: `<span class="text-success">${pet.name}</span><br><small class="text-info">${pet.description}</small><br><div class="row no-gutters"><div class="col-12 text-center"><small class="text-warning">Tier ${tier} Pile</small></div><div class="col-4 text-left"><small class="text-muted">${currentCount} / ${countForTier} to next</small></div><div class="col-4 text-center"><small class="text-muted">${multiplier + 1}x Multiplier</small></div><div class="col-4 text-right"><small class="text-muted">${count} Extras Found</small></div></div>`,
+                imageUrl: pet.media,
+                imageWidth: 128,
+                imageHeight: 128,
+                imageAlt: pet.name,
+            });
+        }
     }
 
     getPetCount(pet) {

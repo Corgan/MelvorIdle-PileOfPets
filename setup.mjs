@@ -17,10 +17,18 @@ export async function setup({ loadModule, onCharacterLoaded, patch, settings }) 
     });
 
     settings.section('Pile of Pets').add([{
+        name: 'notificationToggle',
+        type: 'switch',
+        label: 'Replace Popup with Notification',
+        default: false,
+        onChange: function(value, previousValue) {
+            return game.pileofpets.setNotificationToggle(value);
+        }
+    }, {
         name: 'example',
         type: 'dynamic-label',
         label: 'placeholder'
-      }, {
+    }, {
         type: 'number',
         name: 'initialRequired',
         label: 'Initial Count Required',
