@@ -15,7 +15,7 @@ export async function setup({ loadModule, onCharacterLoaded, patch, settings }) 
                 root.innerHTML = data;
         }
     });
-
+    
     settings.section('Pile of Pets').add([{
         name: 'notificationToggle',
         type: 'switch',
@@ -23,6 +23,14 @@ export async function setup({ loadModule, onCharacterLoaded, patch, settings }) 
         default: false,
         onChange: function(value, previousValue) {
             return game.pileofpets.setNotificationToggle(value);
+        }
+    }, {
+        name: 'suppressAtMax',
+        type: 'switch',
+        label: 'Suppress popup/notification when at max tier',
+        default: true,
+        onChange: function(value, previousValue) {
+            return game.pileofpets.setSuppressAtMax(value);
         }
     }, {
         name: 'example',

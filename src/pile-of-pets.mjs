@@ -6,6 +6,7 @@ export class PileOfPetsManager extends StatProvider {
         this.petCount = new Map();
         this.validPets = game.pets.filter(this.petFilter);
         this.notificationToggle = settings.section('Pile of Pets').get('notificationToggle');
+        this.suppressAtMax = settings.section('Pile of Pets').get('suppressAtMax');
         this.initialRequired = settings.section('Pile of Pets').get('initialRequired');
         this.tierScaling = settings.section('Pile of Pets').get('tierScaling');
         this.maxTier = settings.section('Pile of Pets').get('maxTier');
@@ -142,6 +143,10 @@ export class PileOfPetsManager extends StatProvider {
         this.notificationToggle = value;
     }
 
+    setSuppressAtMax(value) {
+        this.suppressAtMax = value;
+    }
+
     setInitialRequired(value) {
         if(Number.isSafeInteger(value) && value >= 1) {
             this.initialRequired = value;
@@ -209,6 +214,9 @@ export class PileOfPetsManager extends StatProvider {
 
         if(tier > 0 && tier === game.pileofpets.maxTier)
             countForTier = '∞';
+
+        if(tier === game.pileofpets.maxTier && game.pileofpets.suppressAtMax)
+            return;
 
         if(this.notificationToggle) {
             game.combat.notifications.add({
