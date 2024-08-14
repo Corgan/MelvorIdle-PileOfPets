@@ -7,6 +7,7 @@ export class PileOfPetsManager extends StatProvider {
         this.validPets = game.pets.filter(this.petFilter);
         this.notificationToggle = settings.section('Pile of Pets').get('notificationToggle');
         this.suppressAtMax = settings.section('Pile of Pets').get('suppressAtMax');
+        this.suppressNonRankUp = settings.section('Pile of Pets').get('suppressNonRankUp');
         this.initialRequired = settings.section('Pile of Pets').get('initialRequired');
         this.tierScaling = settings.section('Pile of Pets').get('tierScaling');
         this.maxTier = settings.section('Pile of Pets').get('maxTier');
@@ -31,7 +32,7 @@ export class PileOfPetsManager extends StatProvider {
     }
 
     petFilter(pet) {
-        let isSkill = game.skills.find(skill => skill.pets.includes(pet)) !== undefined;
+        let isSkill = game.skills.find(skill => skill.pets.includes(pet) || (skill.skillingPets !== undefined && skill.skillingPets.includes(pet))) !== undefined;
         let isDungeon = game.dungeons.find(dungeon => dungeon.pet && dungeon.pet.pet === pet && dungeon.fixedPetClears === false && dungeon.pet.weight > 1) !== undefined
         let isAbyssDepth = game.abyssDepth && game.abyssDepths.find(abyssDepth => abyssDepth.pet && abyssDepth.pet.pet === pet && abyssDepth.fixedPetClears === false && abyssDepth.pet.weight > 1) !== undefined
         let isSlayerArea = game.slayerAreas.find(slayerArea => slayerArea.pet && slayerArea.pet.pet === pet && slayerArea.pet.weight > 1) !== undefined
@@ -147,6 +148,10 @@ export class PileOfPetsManager extends StatProvider {
         this.suppressAtMax = value;
     }
 
+    setSuppressNonRankUp(value) {
+        this.suppressNonRankUp = value;
+    }
+
     setInitialRequired(value) {
         if(Number.isSafeInteger(value) && value >= 1) {
             this.initialRequired = value;
@@ -216,6 +221,9 @@ export class PileOfPetsManager extends StatProvider {
             countForTier = '∞';
 
         if(tier === game.pileofpets.maxTier && game.pileofpets.suppressAtMax)
+            return;
+
+        if(currentCount !== 0 && game.pileofpets.suppressNonRankUp && !this.notificationToggle)
             return;
 
         if(this.notificationToggle) {

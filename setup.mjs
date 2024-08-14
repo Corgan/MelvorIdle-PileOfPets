@@ -33,6 +33,15 @@ export async function setup({ loadModule, onCharacterLoaded, patch, settings }) 
             return game.pileofpets.setSuppressAtMax(value);
         }
     }, {
+        name: 'suppressNonRankUp',
+        type: 'switch',
+        label: 'Popup only displays when reaching a new tier',
+        hint: 'Does nothing if popups are replaced with notifications',
+        default: false,
+        onChange: function(value, previousValue) {
+            return game.pileofpets.setSuppressNonRankUp(value);
+        }
+    }, {
         name: 'example',
         type: 'dynamic-label',
         label: 'placeholder'
